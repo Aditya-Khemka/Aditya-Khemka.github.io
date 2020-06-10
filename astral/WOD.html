@@ -1,0 +1,226 @@
+
+<!DOCTYPE HTML>
+
+
+<html>
+	<head>
+		<style>
+			a { color: #EDB5A5; } /* CSS link color */
+			a {text-decoration: wavy;}
+			.headertekst{
+  			text-align: center;
+				}
+		</style>
+		<title>Water Overflow Detector / Smart Water Tank</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper-->
+			<div id="wrapper">
+
+				<!-- Nav -->
+					<nav id="nav">
+						<a href="#abstract" class="icon solid fas fa-file-alt"><span>Abstract</span></a>
+						<a href="#circuit" class="icon solid 	fas fa-microchip"><span>Circuit</span></a>
+						<a href="#Code" class="icon solid 	fas fa-file-code"><span>Code</span></a>
+					</nav>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- abstract -->
+							<article id="abstract" class="panel intro">
+								<header>
+									<h2>Water Overflow Detector / Smart Water Tank</h2><br>
+                  <p style="font-size:20px;">This simple device solves a very common problem of our society- shortage of water. Using an ultrasonic sensor, it estimates the level of water in a water-tank and turns on or of the pump accordingly thus minimising the wastage of water from excess water running out of overhead tanks</p>
+                  <ul class="fa-ul">
+										<p><li><i class="fa-li fa fa-arrow-circle-down"></i><a href="..\astral\Water Overflow detector.docx" >Download Documentation</li></a></p>
+									</ul>
+								</header>
+								<a href="#" class="jumplink pic">
+									<img src="images/WOD.png" />
+								</a>
+							</article>
+
+						<!-- circuit -->
+							<article id="circuit"  class="panel">
+								<section>
+									<div class="row">
+										<h2>Connections</h2><br><br><br>
+										<table><br><br><br>
+											<thead align="center">
+											<tr>
+											<td>VCC of Ultrasonic sensor</td>
+											<td>5v of Arduino</td>
+											</tr>
+											<tr>
+											<td>GND of Ultrasonic sensor</td>
+											<td>GND of Arduino</td>
+											</tr>
+											<tr>
+											<td>ECHO of Ultrasonic sensor</td>
+											<td>pin 9 of Arduino</td>
+											</tr>
+											<tr>
+											<td>TRIG of Ultrasonic sensor</td>
+											<td>pin 8 of Arduino</td>
+											</tr>
+											<tr>
+											<td>&nbsp;</td>
+											<td>&nbsp;</td>
+											</tr>
+											<tr>
+											<td>VCC of One Channel Relay</td>
+											<td>5V of Arduino</td>
+											</tr>
+											<tr>
+											<td>GND of One Channel Relay</td>
+											<td>GND of Arduino</td>
+											</tr>
+											<tr>
+											<td>IN 1 of One Channel Relay</td>
+											<td>pin 13 of Arduino</td>
+											</tr>
+											<tr>
+											<td>&nbsp;</td>
+											<td>&nbsp;</td>
+											</tr>
+											<tr>
+											<td>Pin 1 (VSS) of L.C.D</td>
+											<td>GND of Arduino</td>
+											</tr>
+											<tr>
+											<td>in 2 (VDD) of L.C.D</td>
+											<td>5V of Arduino</td>
+											</tr>
+											<tr>
+											<td>Pin 3 (V0) of L.C.D</td>
+											<td>Pin 3 (V0) of L.C.D</td>
+											</tr>
+											<tr>
+											<td>Pin 4 (RS) of L.C.D</td>
+											<td>Pin 12 of Arduino</td>
+											</tr>
+											<tr>
+											<td>Pin 5 (RW) of L.C.D</td>
+											<td>GND of Arduino</td>
+											</tr>
+											<tr>
+											<td>Pin 6 (EN) of L.C.D</td>
+											<td>Pin 11 of Arduino</td>
+											</tr>
+											<tr>
+											<td>Pin 11 (D4) of L.C.D</td>
+											<td>Pin 5 of Arduino</td>
+											</tr>
+											<tr>
+											<td>Pin 12 (D5) of L.C.D</td>
+											<td>Pin 4 of Arduino</td>
+											</tr>
+											<tr>
+											<td>Pin 13 (D6) of L.C.D</td>
+											<td>Pin 3 of Arduino</td>
+											</tr>
+											<tr>
+											<td>Pin 14(D7) of L.C.D</td>
+											<td>Pin 2 of Arduino</td>
+											</tr>
+											<tr>
+											<td>Pin 15 (A) of L.C.D</td>
+											<td>5V of Arduino</td>
+											</tr>
+											<tr>
+											<td>Pin 16 (K) of L.C.D</td>
+											<td>GND of Arduino</td>
+											</tr>
+											<tr>
+											<td>&nbsp;</td>
+											<td>&nbsp;</td>
+											</tr>
+											</thead>
+											</table>
+									</div>
+								</section>
+							</article>
+
+						<!-- Code -->
+							<article id="Code" class="panel">
+								<header>
+									<h2>Source code<h2>
+								</header>
+								<pre><code><xmr>
+
+#include <LiquidCrystal.h>
+LiquidCrystal lcd(12,11,5,4,3,2);
+# define echopin 9
+# define trigpin 8
+int maximumRange=50;
+long duration, distance;
+void setup(){
+lcd.begin(16,2);
+Serial.begin (9600);
+pinMode (trigpin, OUTPUT);
+pinMode (echopin, INPUT);
+pinMode (4,OUTPUT);
+pinMode (13,OUTPUT);
+}
+void loop() 
+{
+digitalWrite (trigpin, LOW);
+delayMicroseconds(2);
+digitalWrite (trigpin, HIGH);
+delayMicroseconds(10);
+duration = pulseIn(echopin, HIGH);
+distance=duration/58.2;
+delay(50);
+Serial.println(distance);
+lcd.clear();
+lcd.setCursor (0,0);
+lcd.print("WATERLEVEL:");
+lcd.print(distance);
+delay(0);
+if(distance <= 3)
+{
+  digitalWrite (13, HIGH);
+  digitalWrite (7, HIGH);
+  lcd.setCursor(0,1);
+  lcd.print("TANK IS FULL");
+  delay(0);
+}
+ else if (distance>=20)
+{
+  digitalWrite (7, LOW);
+  digitalWrite (13, LOW);
+  lcd.setCursor(0,1);
+  lcd.print("MOTOR STARTED");
+  }
+}                                                
+
+                </xmr></code></pre><br><br>
+								</article>
+
+					</div>
+
+				<!-- Footer -->
+					<div id="footer">
+						<footer id="footer">
+							<span><a href="../index.html" title="Go back to home page">Back to Home</a>  &nbsp;   |     &nbsp;     Made by Aditya Khemka with the help of <a href="http://html5up.net" target=_blank>HTML5 UP</a> &nbsp;    |&nbsp;  Supported by <a href="http://techtop.org/zero2maker-boot-camp-on-web-development/" target="_blank" >Zero2Maker</a></span>
+						</footer>
+					</div>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>

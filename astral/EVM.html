@@ -1,0 +1,644 @@
+<!DOCTYPE HTML>
+
+
+<html>
+	<head>
+		<style>
+			a { color: #EDB5A5; } /* CSS link color */
+			a {text-decoration: wavy;}
+			.headertekst{
+  			text-align: center;
+				}
+		</style>
+		<title>Electronic Voting Machine</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper-->
+			<div id="wrapper">
+
+				<!-- Nav -->
+					<nav id="nav">
+            <a href="#abstract" class="icon solid fas fa-file-alt"><span>Abstract</span></a>
+            <a href="#circuit" class="icon solid 	fas fa-microchip"><span>Circuit</span></a>
+						<a href="#Code" class="icon solid 	fas fa-file-code"><span>Code</span></a>
+					</nav>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- abstract -->
+							<article id="abstract" class="panel intro">
+								<header>
+									<h1><strong>Electronic Voting Machine</strong></h1>
+									<p>This was just an hobby project completed on 19 May 2019 (the last voting day of the 17<sup>th</sup> Lok Sabha Elections), as a small honour to the most crucial aspect of the world's largest democracy.</p>
+									<br><ul class="fa-ul">
+										</ul>
+								</header>
+								<a href="#" class="jumplink pic">
+									<img src="images/EVM.jpg" alt="" />
+								</a>
+              </article>
+              
+              	<!-- circuit -->
+							<article id="circuit"  class="panel">
+								<section>
+									<div class="row">
+										<h2>Connections</h2><br><br><br>
+										<table><br>
+                      <thead align="center"><br>
+                      <tr>
+                      <td>Switch c1 (for candidate 1)</td>
+                      <td>pin 31 of Arduino</td>
+                      </tr>
+                      <tr>
+                      <td>Switch c2&nbsp;(for candidate 2)</td>
+                      <td>pin 32 of Arduino</td>
+                      </tr>
+                      <tr>
+                      <td>Switch c3&nbsp;(for candidate 3)</td>
+                      <td>pin 33 of Arduino</td>
+                      </tr>
+                      <tr>
+                      <td>&nbsp;Switch c4&nbsp;(for candidate 4)</td>
+                      <td>&nbsp;pin 34 of Arduino</td>
+                      </tr>
+                      <tr>
+                      <td>Switch no&nbsp;(for NOTA)</td>
+                      <td>pin 8 of Arduino</td>
+                      </tr>
+                      <tr>
+                      <td>Switch ne (for next candidate)</td>
+                      <td>pin 10 of Arduino</td>
+                      </tr>
+                      <tr>
+                      <td>Switch res&nbsp;(to declare results)</td>
+                      <td>pin 9 of Arduino</td>
+                      </tr>
+                      <tr>
+                      <td>&nbsp;</td>
+                      <td>&nbsp;</td>
+                      </tr>
+                      <tr>
+                      <td>Pin 1 (VSS) of L.C.D</td>
+                      <td>&nbsp;GND&nbsp;of Arduino</td>
+                      </tr>
+                      <tr>
+                      <td>Pin 2 (VDD) of L.C.D</td>
+                      <td>&nbsp;5V&nbsp;of Arduino</td>
+                      </tr>
+                      <tr>
+                      <td>Pin 3 (V0) of L.C.D&nbsp;</td>
+                      <td>&nbsp;potentiometer center pin</td>
+                      </tr>
+                      <tr>
+                      <td>Pin 4 (RS) of L.C.D</td>
+                      <td>Pin2&nbsp;of Arduino</td>
+                      </tr>
+                      <tr>
+                      <td>Pin 5 (RW) of L.C.D</td>
+                      <td>GND&nbsp;of Arduino</td>
+                      </tr>
+                      <tr>
+                      <td>Pin 6 (EN) of L.C.D</td>
+                      <td>Pin 3&nbsp;of Arduino</td>
+                      </tr>
+                      <tr>
+                      <td>Pin 11 (D4) of L.C.D</td>
+                      <td>Pin 4&nbsp;of Arduino</td>
+                      </tr>
+                      <tr>
+                      <td>Pin 12 (D5) of L.C.D</td>
+                      <td>Pin 5&nbsp;of Arduino</td>
+                      </tr>
+                      <tr>
+                      <td>Pin 13 (D6) of L.C.D</td>
+                      <td>Pin 6&nbsp;of Arduino</td>
+                      </tr>
+                      <tr>
+                      <td>Pin 14(D7) of L.C.D</td>
+                      <td>Pin 7&nbsp;of Arduino</td>
+                      </tr>
+                      <tr>
+                      <td>Pin 15 (A) of L.C.D</td>
+                      <td>Pin 10&nbsp;of Arduino</td>
+                      </tr>
+                      <tr>
+                      <td>Pin 16 (K) of L.C.D</td>
+                      <td>GND&nbsp;of Arduino</td>
+                      </tr>
+                      </thead>
+                      </table>
+									</div>
+								</section>
+							</article>
+
+						<!-- Code -->
+							<article id="Code" class="panel">
+								<header>
+									<h2>Source code<sup>*</sup><h2>
+                </header>
+								<pre><code>  <xmp>
+
+#include <LiquidCrystal.h>
+char r='r';
+boolean flag= false, voted=true, declare_result=false;
+int c=0, initial=0, next=0,can1=0, can2=0, can3=0, can4=0, nota=0,polled=0,difference=0;
+const int c1=31, c2=32, c3=33, c4=34, no=8, ne=10, result=9;
+ const char pass [9] = {'P','a','s','s','w','o','r','d'};
+LiquidCrystal lcd(2,3,4,5,6,7);
+//////////////////////////////////////////////////////////setup()////////////////////////////////////////////setup()
+void setup() {
+  Serial.begin(9600);
+  delay(50);
+  Serial.println("Enter Password:");
+  lcd.begin(16,2);
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print(" Enter Password ");
+  lcd.setCursor(0,1);
+  lcd.print("   to continue  ");
+}
+//////////////////////////////////////////////////////////loop()////////////////////////////////////////////loop()
+void loop() {
+  if(flag==true){
+  NextVote();
+  delay(50);
+  }
+  if(initial==0){
+    CheckPassword();
+    delay(50);
+  }
+  delay(50);
+  if(flag==true){
+  AcceptVote();
+  }
+}
+//////////////////////////////////////////////////////////NextVote()///////////////////////////////////
+void NextVote(){
+  //press next to accept another vote
+  if(voted==true){
+  while(digitalRead(ne)==HIGH){
+    delay(50);
+     if(digitalRead(ne)==LOW){
+      delay(50);
+    Serial.println("Enter voter ID (Optional)");
+   lcd.setCursor(0,0);
+   lcd.print("    Ready to    ");
+   lcd.setCursor(0,1);
+   lcd.print("  accept  vote  ");
+    voted=false;
+  }
+  }
+  }
+}
+//////////////////////////////////////////////////////////CheckPassword()/////////////////////////////////////////
+void CheckPassword(){
+  Serial.flush();
+  delay(50);
+  if(c>=0 && c<3){
+    password();
+    delay(50);
+  }
+   if(c>=3){
+    delay(50);
+    Serial.println("Due to various incorrect attempts, the software has decided to declare 'Booth Capturing'.");
+    delay(50);
+   lcd.setCursor(0,0);
+   lcd.print("    Declared    ");
+   lcd.setCursor(0,1);
+   lcd.print("Booth  Capturing");    
+    empty();
+  }
+}
+//////////////////////////////////////////////////////////empty()//////////////////////////////////////////
+void empty(){
+  Serial.println("----------Terminate----------");
+  //endless loop
+ for(int i=0; i<=0; i--){
+  ;
+ }
+}
+//////////////////////////////////////////////////////////password()/////////////////////////////////
+void password(){
+  //check for password
+  Serial.flush();
+  delay(100);
+  declare_result=false;
+  if(Serial.available()){
+    delay(50);
+  for(int i=0; i<8; i++){
+    char d= Serial.read();
+    delay(50);
+    if(d!=pass[i]){
+      delay(50);
+      flag=false;
+    }
+    if(d==pass[i]){
+      delay(50);
+      flag=true;
+    }
+  }
+
+  //password incorrect
+  if(flag == false){
+    delay(50);
+    Serial.println("Incorrect Password. Please retry........");
+    delay(50);
+    c++;
+    delay(50);
+    declare_result=false;
+  }
+
+  //password correct
+  else{
+    delay(50);
+    Serial.println("Access granted.Press next to continue......");
+    delay(50);
+    c=0;
+    initial ++;
+    NextVote();
+    declare_result=true;
+   lcd.setCursor(0,0);
+   lcd.print("Polling about to");
+   lcd.setCursor(0,1);
+   lcd.print("     Begin      ");
+  }
+  }
+}
+//////////////////////////////////////////////////////////AcceptVote()////////////////////////////////////////
+void AcceptVote(){
+  delay(100);
+  if(voted==false){
+    delay(100);
+    //for candidate 1
+    while(digitalRead(c1)==HIGH){
+    if(digitalRead(c1)==LOW){
+       can1++;
+       Serial.println("Vote accepted");
+       delay(100);
+       voted=true;
+       polled++;
+       lcd.setCursor(0,0);
+       lcd.print(" You Voted For: ");
+       lcd.setCursor(0,1);
+       lcd.print("  Candidate 1   ");
+    }
+    }
+    //for candidate 2
+    while(digitalRead(c2)==HIGH){
+    if(digitalRead(c2)==LOW){
+       can2++;
+       Serial.println("Vote accepted");
+       delay(100);
+       voted=true;
+       polled++;
+       lcd.setCursor(0,0);
+       lcd.print(" You Voted For: ");
+       lcd.setCursor(0,1);
+       lcd.print("  Candidate 2   ");
+    }
+    }
+    //for candidate 3
+    while(digitalRead(c3)==HIGH){
+    if(digitalRead(c3)==LOW){
+       can3++;
+       Serial.println("Vote accepted");
+       delay(100);
+       voted=true;
+       polled++;
+       lcd.setCursor(0,0);
+       lcd.print(" You Voted For: ");
+       lcd.setCursor(0,1);
+       lcd.print("  Candidate 3   ");
+    }
+    }
+    //for candidate 4
+    while(digitalRead(c4)==HIGH){
+    if(digitalRead(c4)==LOW){
+       can4++;
+       Serial.println("Vote accepted");
+       delay(100);
+       voted=true;
+       polled++;
+       lcd.setCursor(0,0);
+       lcd.print(" You Voted For: ");
+       lcd.setCursor(0,1);
+       lcd.print("  Candidate 4   ");
+    }
+    }
+    //NOTA
+    while(digitalRead(no)==HIGH){
+    if(digitalRead(no)==LOW){
+       nota++;
+       Serial.println("Vote accepted");
+       delay(50);
+       voted=true;
+       polled++;
+       lcd.setCursor(0,0);
+       lcd.print(" You Voted For: ");
+       lcd.setCursor(0,1);
+       lcd.print("     No one     ");
+    }
+    }
+  }
+  //Results
+    while(digitalRead(result)==HIGH){
+    if(digitalRead(result)==LOW){
+       Serial.println("Preparing Results");
+       delay(50);
+       declare_result=false;
+       DeclareResult();
+       delay(100);
+       voted=false;
+    }
+    }
+  }
+//////////////////////////////////////////////////////////DeclareResult()//////////////////////////////////////
+void DeclareResult(){
+  //release results
+  lcd.clear();
+  delay(50);
+  if(polled>0){
+  ForAll();
+  }
+
+  //can1,2,3,4==0
+  if(can1==0&&can2==0&&can3==0&&can4==0){
+    Serial.println("No voting done");
+    lcd.clear();
+    lcd.setCursor(0,1);
+    lcd.print(" No voting done ");
+  }
+
+  //can1>can2,can3,can4
+  else if(can1>can2 && can1>can3 && can1>can4 && can1>nota){
+    Serial.println("candidate 1 wins");
+   lcd.setCursor(0,0);
+   lcd.print(" Maximum votes  ");
+   lcd.setCursor(0,1);
+   lcd.print("for: Candidate 1");
+  }
+
+  //can2>can1,can2,can3
+  else if(can2>can1 && can2>can3 && can2>can4 && can2>nota){
+    Serial.println("candidate 2 wins");
+    lcd.setCursor(0,0);
+   lcd.print(" Maximum votes  ");
+   lcd.setCursor(0,1);
+   lcd.print("for: Candidate 2");
+  }
+
+  //can3>can1,can2,can4
+   else if(can3>can1 && can3>can2 && can3>can4 && can3>nota){
+    Serial.println("candidate 3 wins");
+    lcd.setCursor(0,0);
+   lcd.print(" Maximum votes  ");
+   lcd.setCursor(0,1);
+   lcd.print("for: Candidate 3");
+  }
+
+  //can4>can1,can2,can3
+   else if(can4>can1 && can4>can2 && can4>can3 && can4>nota){
+    Serial.println("candidate 4 wins");
+   lcd.setCursor(0,0);
+   lcd.print(" Maximum votes  ");
+   lcd.setCursor(0,1);
+   lcd.print("for: Candidate 4");
+  }
+
+  //nota>can1,can2,can3,can4
+  else if(nota>can1 && nota>can2 && nota>can3 && nota>can4){
+    Serial.println("No one wins");
+    lcd.clear();
+    lcd.setCursor(0,1);
+    lcd.print("   No one wins  ");
+  }
+
+  //can1==can2==can3==can4
+  else if (can1==can4&&can1==can2&&can2==can3&&can3==can4){
+    Serial.println("Tye between all candidates");
+   lcd.setCursor(0,0);
+   lcd.print("  Tye Between: ");
+   lcd.setCursor(0,1);
+   lcd.print(" All candidates ");
+  }
+
+  //can1==can2
+  else if (can1==can2){
+    Serial.println("Tye between candidate 1 and candidate 2");
+   lcd.setCursor(0,0);
+   lcd.print("  Tye Between: ");
+   lcd.setCursor(0,1);
+   lcd.print("Candidate 1 & 2");
+  }
+
+  //can1==can3
+  else if (can1==can3){
+    Serial.println("Tye between candidate 1 and candidate 3");
+    lcd.setCursor(0,0);
+   lcd.print("  Tye Between: ");
+   lcd.setCursor(0,1);
+   lcd.print("Candidate 1 & 3");
+  }
+
+  //can1==can4
+  else if (can1==can4){
+    Serial.println("Tye between candidate 1 and candidate 4");
+    lcd.setCursor(0,0);
+   lcd.print("  Tye Between: ");
+   lcd.setCursor(0,1);
+   lcd.print("Candidate 1 & 4");
+  }
+
+  //can2==can3
+  else if (can2==can3){
+    Serial.println("Tye between candidate 2 and candidate 3");
+    lcd.setCursor(0,0);
+   lcd.print("  Tye Between: ");
+   lcd.setCursor(0,1);
+   lcd.print("Candidate 2 & 3");
+  }
+
+  //can2==can4
+  else if (can2==can4){
+    Serial.println("Tye between candidate 2 and candidate 4");
+    lcd.setCursor(0,0);
+   lcd.print("  Tye Between: ");
+   lcd.setCursor(0,1);
+   lcd.print("Candidate 2 & 4");
+  }
+
+  //can3==can4
+  else if (can3==can4){
+    Serial.println("Tye between candidate 3 and candidate 4");
+    lcd.setCursor(0,0);
+   lcd.print("  Tye Between: ");
+   lcd.setCursor(0,1);
+   lcd.print("Candidate 3 & 4");
+  }
+
+  //nota==can1
+  else if(nota==can1){
+    Serial.println("Candidate 1 wins");
+    lcd.setCursor(0,0);
+   lcd.print(" Maximum votes  ");
+   lcd.setCursor(0,1);
+   lcd.print("for: Candidate 1");
+  }
+
+  //nota==can2
+   else if(nota==can2){
+    Serial.println("Candidate 2 wins");
+    lcd.setCursor(0,0);
+   lcd.print(" Maximum votes  ");
+   lcd.setCursor(0,1);
+   lcd.print("for: Candidate 2");
+  }
+
+  //nota==can3
+   else if(nota==can3){
+    Serial.println("Candidate 3 wins");
+    lcd.setCursor(0,0);
+   lcd.print(" Maximum votes  ");
+   lcd.setCursor(0,1);
+   lcd.print("for: Candidate 3");
+  }
+
+  //nota==can4
+   else if(nota==can4){
+   Serial.println("Candidate 4 wins");
+   lcd.setCursor(0,0);
+   lcd.print(" Maximum votes  ");
+   lcd.setCursor(0,1);
+   lcd.print("for: Candidate 4");
+  }
+  declare_result=false;
+  delay(30000);
+  //Signature
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("   EVM Made by  ");
+  lcd.setCursor(0,1);
+  lcd.print(" Aditya Khemka  ");
+  lcd.setCursor(0,0);
+  if(polled>0){
+  delay(15000);
+  lcd.print("   of D.B.M.S.  ");
+  lcd.setCursor(0,1);
+  lcd.print(" English School ");
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("    Thanks for  ");
+  lcd.setCursor(0,1);
+  lcd.print("     Voting     ");
+  lcd.setCursor(0,0);
+  empty();
+  }
+}
+//////////////////////////////////////////////////////////ForAll()////////////////////////////////////////////ForAll()
+void ForAll(){
+  //total
+  Serial.print("Total votes polled: ");
+  Serial.println(polled);
+  lcd.setCursor(0,0);
+  lcd.print("  Total Votes   ");
+  lcd.setCursor(0,1);
+  lcd.print("   Polled:      ");
+  lcd.setCursor(11,1);
+  lcd.print(polled);
+  delay(5000);
+
+  //candidate 1
+  Serial.print("Votes secured by candidate 1: ");
+  Serial.println(can1);
+  lcd.setCursor(0,0);
+  lcd.print("Votes secured by");
+  lcd.setCursor(0,1);
+  lcd.print("Candidate 1:    ");
+  lcd.setCursor(14,1);
+  lcd.print(can1);
+  delay(5000);
+
+  //candidate 2
+  Serial.print("Votes secured by candidate 2: ");
+  Serial.println(can2);
+  lcd.setCursor(0,0);
+  lcd.print("Votes secured by");
+  lcd.setCursor(0,1);
+  lcd.print("Candidate 2:    ");
+  lcd.setCursor(14,1);
+  lcd.print(can2);
+  delay(5000);
+
+  //candidate 3
+  Serial.print("Votes secured by candidate 3: ");
+  Serial.println(can3);
+  lcd.setCursor(0,0);
+  lcd.print("Votes secured by");
+  lcd.setCursor(0,1);
+  lcd.print("Candidate 3:    ");
+  lcd.setCursor(14,1);
+  lcd.print(can3);
+  delay(5000);
+
+  //candidate 4
+  Serial.print("Votes secured by candidate 4: ");
+  Serial.println(can4);
+  lcd.setCursor(0,0);
+  lcd.print("Votes secured by");
+  lcd.setCursor(0,1);
+  lcd.print("Candidate 4:    ");
+  lcd.setCursor(14,1);
+  lcd.print(can4);
+  delay(5000);
+  
+  //nota
+  Serial.print("Total Number of Void Votes  : ");
+  Serial.println(nota);
+  lcd.setCursor(0,0);
+  lcd.print("Total number of ");
+  lcd.setCursor(0,1);
+  lcd.print("Void votes:     ");
+  lcd.setCursor(14,1);
+  lcd.print(nota);
+  delay(5000);
+}
+
+</xmp></code></pre><br><br>
+								<p><strong>*</strong><sub> This is not the latest version of the code</sub></p>
+							</article>
+
+							<!-- Palnning ahead -->
+							<article id="More" class="panel">
+								<header>
+                  <h2>Planning ahead</h2>
+                  <p>I am currently working to equip the device with wi-fi and a camera. For the purpose, I plan to use an esp-32 cam or esp-32 eye board, which not only has inbuilt wifi but also a 2mp camera. It can then be connected to the user's mobile phone using blynk. The user can then use their phone to send messages to the screen, look who is at their doorstep and even open the door, just with a click.</p>
+                  </header>
+								
+							</article>
+					</div>
+
+				<!-- Footer -->
+					<div id="footer">
+						<footer id="footer">
+							<span><a href="../index.html" title="Go back to home page">Back to Home</a>  &nbsp;   |     &nbsp;     Made by Aditya Khemka with the help of <a href="http://html5up.net" target=_blank>HTML5 UP</a> &nbsp;    |&nbsp;  Supported by <a href="http://techtop.org/zero2maker-boot-camp-on-web-development/" target="_blank" >Zero2Maker</a></span>
+						</footer>
+					</div>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
