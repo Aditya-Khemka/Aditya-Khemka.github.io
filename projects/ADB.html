@@ -1,0 +1,495 @@
+<!DOCTYPE HTML>
+
+
+<html>
+	<head>
+		<style>
+			a { color: #EDB5A5; } /* CSS link color */
+			a {text-decoration: wavy;}
+			.headertekst{
+  			text-align: center;
+				}
+		</style>
+		<title>Answering Door Bell</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper-->
+			<div id="wrapper">
+
+				<!-- Nav -->
+					<nav id="nav">
+						<a href="#abstract" class="icon solid fas fa-file-alt"><span>Abstract</span></a>
+						<a href="#circuit" class="icon solid 	fas fa-microchip"><span>Circuit</span></a>
+						<a href="#Code" class="icon solid 	fas fa-file-code"><span>Code</span></a>
+						<a href="#More" class="icon solid 	fas fa-list"><span>More</span></a>
+					</nav>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- abstract -->
+							<article id="abstract" class="panel intro">
+								<header>
+									<h1><strong>Answering Door Bell</strong></h1>
+									<p>The Answering Door Bell is a simple device that displays a message to your guests at the door with just the click of a button. Any button of an IR remote can be programmed to display a particular message on the screen.</button></p>
+									<br><ul class="fa-ul">
+										<li><i class="fa-li fa fa-youtube"></i><a href="https://www.youtube.com/playlist?list=PL4CmDbtIkG5RqcY4DMggNjBSoAZtkKJJA" target=_blank>Watch Video on YouTube</li></a>
+										<li><i class="fa-li fa fa-arrow-circle-down"></i><a href="https://drive.google.com/drive/folders/14xoAEsCOnQnxIrDjFgFKXB53dKWwC7Gz" download >Download Documentation and resources</li></a>
+									</ul>
+								</header>
+								<a href="#" class="jumplink pic">
+									<img src="images/ADB.jpg" alt="" />
+								</a>
+							</article>
+
+						<!-- circuit -->
+							<article id="circuit"  class="panel">
+								<section>
+									<div class="row">
+										<h2>Connections</h2>
+										<table>
+											<thead align="center"><br><br><br><br>
+												<tr>
+													<td>VCC of IR Receiver</td>
+													<td>5v of Arduino</td>
+													</tr>
+													<tr>
+													<td>GND of IR Receiver</td>
+													<td>GND of Arduino</td>
+													</tr>
+													<tr>
+													<td>OUT of IR Receiver</td>
+													<td>pin 11 of Arduino.</td>
+													</tr>
+													<tr>
+													<td>&nbsp;</td>
+													<td>&nbsp;</td>
+													</tr>
+													<tr>
+													<td>&nbsp;Buzzer +ve</td>
+													<td>&nbsp;Pin 13 of Arduino</td>
+													</tr>
+													<tr>
+													<td>&nbsp;Buzzer -ve&nbsp;</td>
+													<td>&nbsp;GND of Arduino</td>
+													</tr>
+													<tr>
+													<td>&nbsp;</td>
+													<td>&nbsp;</td>
+													</tr>
+													<tr>
+													<td>Pin 1 (VSS) of L.C.D</td>
+													<td>&nbsp;GND&nbsp;of Arduino</td>
+													</tr>
+													<tr>
+													<td>Pin 2 (VDD) of L.C.D</td>
+													<td>&nbsp;5V&nbsp;of Arduino</td>
+													</tr>
+													<tr>
+													<td>Pin 3 (V0) of L.C.D&nbsp;</td>
+													<td>&nbsp;potentiometer center pin</td>
+													</tr>
+													<tr>
+													<td>Pin 4 (RS) of L.C.D</td>
+													<td>Pin2&nbsp;of Arduino</td>
+													</tr>
+													<tr>
+													<td>Pin 5 (RW) of L.C.D</td>
+													<td>GND&nbsp;of Arduino</td>
+													</tr>
+													<tr>
+													<td>Pin 6 (EN) of L.C.D</td>
+													<td>Pin 3&nbsp;of Arduino</td>
+													</tr>
+													<tr>
+													<td>Pin 11 (D4) of L.C.D</td>
+													<td>Pin 4&nbsp;of Arduino</td>
+													</tr>
+													<tr>
+													<td>Pin 12 (D5) of L.C.D</td>
+													<td>Pin 5&nbsp;of Arduino</td>
+													</tr>
+													<tr>
+													<td>Pin 13 (D6) of L.C.D</td>
+													<td>Pin 6&nbsp;of Arduino</td>
+													</tr>
+													<tr>
+													<td>Pin 14(D7) of L.C.D</td>
+													<td>Pin 7&nbsp;of Arduino</td>
+													</tr>
+													<tr>
+													<td>Pin 15 (A) of L.C.D</td>
+													<td>Pin 10&nbsp;of Arduino</td>
+													</tr>
+													<tr>
+													<td>Pin 16 (K) of L.C.D</td>
+													<td>GND&nbsp;of Arduino</td>
+													</tr>
+												</thead>
+										</table>
+									</div>
+								</section>
+							</article>
+
+						<!-- Code -->
+							<article id="Code" class="panel">
+								<header>
+									<h2>Source code<sup>*</sup><h2>
+								</header>
+								<pre><code><xmp>
+
+//initialization
+#include <IRremote.h>
+#include <IRremoteInt.h>
+#include <LiquidCrystal.h>
+int IRpin = 11;
+IRrecv irrecv(IRpin);
+decode_results results;
+const int rs=2, e=3, d4=4, d5=5, d6=6, d7=7;
+LiquidCrystal lcd(rs,e,d4,d5,d6,d7);
+const int RGB=13, led=8, bl=10;
+
+
+//setup
+void setup() {
+  lcd.begin(16,2);
+  lcd.clear();
+  Serial.begin(9600);
+  pinMode(RGB,OUTPUT);
+  pinMode(led,OUTPUT);
+  pinMode(bl,OUTPUT);
+  irrecv.enableIRIn(); // Start the receiver
+  lcd.clear();
+      digitalWrite(RGB,LOW);
+      digitalWrite(led,LOW);
+      digitalWrite(bl,HIGH);
+      lcd.setCursor(0,0);
+      lcd.print("D.B.M.S. English");
+      lcd.setCursor(0,1);
+      lcd.print("     School     ");
+}
+
+//working
+void loop() {
+  if (irrecv.decode(&results)){   //checks if signal is transmitted
+
+     Serial.println(results.value);  // prints the value of the hex code on the serial monitor
+     
+//print message on L.C.D. according to the value received 
+      if(results.value==2672){ 
+        lcd.clear();
+        digitalWrite(RGB,LOW);
+        digitalWrite(led,LOW);
+        digitalWrite(bl,HIGH);
+        lcd.setCursor(0,0);
+        lcd.print("   B.H. Area   ");
+        lcd.setCursor(0,1);
+        lcd.print("   Road No. 7  ");
+      }
+
+         
+      if(results.value==2704){
+        lcd.clear();
+        digitalWrite(RGB,LOW);
+        digitalWrite(led,LOW);
+        digitalWrite(bl, LOW);
+        lcd.setCursor(0,0);
+        lcd.print("                ");
+        lcd.setCursor(0,1);
+        lcd.print("                ");
+      }
+      
+      if(results.value==16){
+      lcd.clear();
+        digitalWrite(led,HIGH);
+        digitalWrite(bl,HIGH);
+        lcd.setCursor(0,0);
+        lcd.print("Please wait for ");
+        lcd.setCursor(0,1);
+        lcd.print("    a minute    ");
+        digitalWrite(RGB,HIGH);
+        delay(500);
+        digitalWrite(RGB,LOW);
+        delay(100);
+        digitalWrite(RGB,HIGH);
+        delay(50);
+        digitalWrite(RGB,LOW);
+        delay(50);
+        digitalWrite(RGB,HIGH);
+        delay(50);
+        digitalWrite(RGB,LOW);
+        delay(50);
+        digitalWrite(RGB,HIGH);
+        delay(250);
+        digitalWrite(RGB,LOW);
+        digitalWrite(led,LOW);
+     }
+      
+     
+     if(results.value==2064){
+      lcd.clear();
+        digitalWrite(led,HIGH);
+        digitalWrite(bl,HIGH);
+        lcd.setCursor(0,0);
+        lcd.print("     Please     ");
+        lcd.setCursor(0,1);
+        lcd.print("    Come  in    ");
+        digitalWrite(RGB,HIGH);
+        delay(500);
+        digitalWrite(RGB,LOW);
+        delay(100);
+        digitalWrite(RGB,HIGH);
+        delay(50);
+        digitalWrite(RGB,LOW);
+        delay(50);
+        digitalWrite(RGB,HIGH);
+        delay(50);
+        digitalWrite(RGB,LOW);
+        delay(50);
+        digitalWrite(RGB,HIGH);
+        delay(250);
+        digitalWrite(RGB,LOW);
+        digitalWrite(led,LOW);
+     }
+      
+     
+     if(results.value==1040){
+      lcd.clear();
+        digitalWrite(led,HIGH);
+        digitalWrite(bl,HIGH);
+        lcd.setCursor(0,0);
+        lcd.print("     Just      ");
+        lcd.setCursor(0,1);
+        lcd.print("    coming     ");
+        digitalWrite(RGB,HIGH);
+        delay(500);
+        digitalWrite(RGB,LOW);
+        delay(100);
+        digitalWrite(RGB,HIGH);
+        delay(50);
+        digitalWrite(RGB,LOW);
+        delay(50);
+        digitalWrite(RGB,HIGH);
+        delay(50);
+        digitalWrite(RGB,LOW);
+        delay(50);
+        digitalWrite(RGB,HIGH);
+        delay(250);
+        digitalWrite(RGB,LOW);
+        digitalWrite(led,LOW);
+     }
+      
+     
+     if(results.value==528){
+      lcd.clear();
+        digitalWrite(led,HIGH);
+        digitalWrite(bl,HIGH); 
+        lcd.setCursor(0,0);
+        lcd.print("Please wait for ");
+        lcd.setCursor(0,1);
+        lcd.print("    5 minutes   ");
+        digitalWrite(RGB,HIGH);
+        delay(500);
+        digitalWrite(RGB,LOW);
+        delay(100);
+        digitalWrite(RGB,HIGH);
+        delay(50);
+        digitalWrite(RGB,LOW);
+        delay(50);
+        digitalWrite(RGB,HIGH);
+        delay(50);
+        digitalWrite(RGB,LOW);
+        delay(50);
+        digitalWrite(RGB,HIGH);
+        delay(250);
+        digitalWrite(RGB,LOW);
+        digitalWrite(led,LOW);
+     }
+      
+     
+     if(results.value==3088){
+      lcd.clear();
+        digitalWrite(led,HIGH);
+        digitalWrite(bl,HIGH);
+        lcd.setCursor(0,0);
+        lcd.print(" Please drop it ");
+        lcd.setCursor(0,1);
+        lcd.print(" in the mailbox ");
+        digitalWrite(RGB,HIGH);
+        delay(500);
+        digitalWrite(RGB,LOW);
+        delay(100);
+        digitalWrite(RGB,HIGH);
+        delay(50);
+        digitalWrite(RGB,LOW);
+        delay(50);
+        digitalWrite(RGB,HIGH);
+        delay(50);
+        digitalWrite(RGB,LOW);
+        delay(50);
+        digitalWrite(RGB,HIGH);
+        delay(250);
+        digitalWrite(RGB,LOW);
+        digitalWrite(led,LOW);
+     }
+      
+     
+     if(results.value==2576){
+      lcd.clear();
+        digitalWrite(led,HIGH);
+        digitalWrite(bl,HIGH);        
+        lcd.setCursor(0,0);
+        lcd.print("   Can we meet  ");
+        lcd.setCursor(0,1);
+        lcd.print("     Later?     ");
+        digitalWrite(RGB,HIGH);
+        delay(500);
+        digitalWrite(RGB,LOW);
+        delay(100);
+        digitalWrite(RGB,HIGH);
+        delay(50);
+        digitalWrite(RGB,LOW);
+        delay(50);
+        digitalWrite(RGB,HIGH);
+        delay(50);
+        digitalWrite(RGB,LOW);
+        delay(50);
+        digitalWrite(RGB,HIGH);
+        delay(250);
+        digitalWrite(RGB,LOW);
+        digitalWrite(led,LOW);
+     }
+      
+     
+     if(results.value==1552){
+      lcd.clear();
+        digitalWrite(led,HIGH);
+        digitalWrite(bl,HIGH);
+        lcd.setCursor(0,0);
+        lcd.print("   Can we meet  ");
+        lcd.setCursor(0,1);
+        lcd.print("    tomorrow    ");
+        digitalWrite(RGB,HIGH);
+        delay(500);
+        digitalWrite(RGB,LOW);
+        delay(100);
+        digitalWrite(RGB,HIGH);
+        delay(50);
+        digitalWrite(RGB,LOW);
+        delay(50);
+        digitalWrite(RGB,HIGH);
+        delay(50);
+        digitalWrite(RGB,LOW);
+        delay(50);
+        digitalWrite(RGB,HIGH);
+        delay(250);
+        digitalWrite(RGB,LOW);
+        digitalWrite(led,LOW);
+     }
+
+     if(results.value==3600){
+      lcd.clear();
+        digitalWrite(led,HIGH);
+        digitalWrite(bl,HIGH);
+        lcd.setCursor(0,0);
+        lcd.print("  We will meet ");
+        lcd.setCursor(0,1);
+        lcd.print(" one hour later ");
+        digitalWrite(RGB,HIGH);
+        delay(500);
+        digitalWrite(RGB,LOW);
+        delay(100);
+        digitalWrite(RGB,HIGH);
+        delay(50);
+        digitalWrite(RGB,LOW);
+        delay(50);
+        digitalWrite(RGB,HIGH);
+        delay(50);
+        digitalWrite(RGB,LOW);
+        delay(50);
+        digitalWrite(RGB,HIGH);
+        delay(250);
+        digitalWrite(RGB,LOW);
+        digitalWrite(led,LOW);
+     }
+
+     if(results.value==272){
+      lcd.clear();
+        digitalWrite(led,HIGH);
+        digitalWrite(bl,HIGH);
+        lcd.setCursor(0,0);
+        lcd.print("    Meet you    ");
+        lcd.setCursor(0,1);
+        lcd.print("     there.     ");
+        digitalWrite(RGB,HIGH);
+        delay(500);
+        digitalWrite(RGB,LOW);
+        delay(100);
+        digitalWrite(RGB,HIGH);
+        delay(50);
+        digitalWrite(RGB,LOW);
+        delay(50);
+        digitalWrite(RGB,HIGH);
+        delay(50);
+        digitalWrite(RGB,LOW);
+        delay(50);
+        digitalWrite(RGB,HIGH);
+        delay(250);
+        digitalWrite(RGB,LOW);
+        digitalWrite(led,LOW);
+     }
+
+      if(results.value==2320){
+      lcd.clear();
+        digitalWrite(led,LOW);
+        digitalWrite(bl,HIGH);
+        digitalWrite(RGB,LOW);
+        lcd.setCursor(0,0);
+        lcd.print("D.B.M.S. English");
+        lcd.setCursor(0,1);
+        lcd.print("     School     ");
+     }
+      
+     delay(499);
+     irrecv.resume();
+     delay(499);
+    }//if any results received
+}//void loop
+                </xmp></code></pre><br><br>
+								<p><strong>*</strong><sub> This is the 2018 version of the code that was presented at MTFIG</sub></p>
+							</article>
+
+							<!-- Palnning ahead -->
+							<article id="More" class="panel">
+								<header>
+                  <h2>Planning ahead</h2>
+                  <p>I am currently working to equip the device with wi-fi and a camera. For the purpose, I plan to use an esp-32 cam or esp-32 eye board, which not only has inbuilt wifi but also a 2mp camera. It can then be connected to the user's mobile phone using blynk. The user can then use their phone to send messages to the screen, look who is at their doorstep and even open the door, just with a click.</p>
+                  </header>
+								
+							</article>
+					</div>
+
+				<!-- Footer -->
+					<div id="footer">
+						<footer id="footer">
+							<span><a href="../index.html" title="Go back to home page">Back to Home</a>  &nbsp;   |     &nbsp;     Made by Aditya Khemka with the help of <a href="http://html5up.net" target=_blank>HTML5 UP</a> &nbsp; </span>
+						</footer>
+					</div>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
